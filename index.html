@@ -23,8 +23,6 @@
 <meta name="twitter:description" content="专注后端开发">
 
     
-    <link rel="alternative" href="/atom.xml" title="余进松的blog" type="application/atom+xml">
-    
     
     <link rel="icon" href="/img/favicon.ico">
     
@@ -76,319 +74,69 @@
     <div id="container">
       <div id="main">
 
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/08/21/构造过程抽象/" title="sicp学习笔记第一章" itemprop="url">sicp学习笔记第一章</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="yujinsong" target="_blank" itemprop="author">yujinsong</a>
-		
-  <p class="article-time">
-    <time datetime="2019-08-21T14:00:00.000Z" itemprop="datePublished"> Published 2019-08-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="计算机程序的构造与解释学习笔记"><a href="#计算机程序的构造与解释学习笔记" class="headerlink" title="计算机程序的构造与解释学习笔记"></a>计算机程序的构造与解释学习笔记</h1><p>设计良好的计算机系统就像设计良好的汽车或者核反应堆一样，具有某种模块化的设计，其中的各个部分都可以独立构造、替换、排出错误    </p>
-<p><strong>1. 程序设计的基本元素</strong>   </p>
-<p>每种强有力的语言都提供了三种机制：</p>
-<ul>
-<li>基本表达形式：用语表示语言最关系的简单个体</li>
-<li>组合方法：从简单的东西构造出复合的对象</li>
-<li>抽象方法：将复合对象命名，并将它们作为单元去操作</li>
-</ul>
-<p><strong>2. 命名和环境</strong></p>
-<ul>
-<li>变量：通过名字去使用计算机对象，将名字标识符称为变量，它的值就是对象</li>
-<li>Lisp 通过define给事物命名。(define pi 3.14159)</li>
-<li>Lisp 程序通常是由简单的过程组成</li>
-</ul>
-<p><strong>3. 复合过程</strong></p>
-<ul>
-<li>数和算数运算是基本的数据和过程</li>
-<li>组合式的嵌套提供了一种组织起多个操作的方法</li>
-<li>定义是一种受限的抽象手段，它为名字关联相应的值</li>
-<li>过程定义：过程是一种强大的抽象技术，过程可以为复合操作提供名字，这样就可以将这样的操作作为一个单元。过程应该是完成一件可以清楚标记的工作，同时能够隐藏一些细节    </li>
-<li>(define (<name> <formal parameters>) <body>)</body></formal></name></li>
-</ul>
-<p><strong>4. 过程的代换模型</strong><br>代换模型只是解释过程调用的过程，而不是解释器的实际工作方式。通常解释器都是采用局部环境的方式。代换模型包括正则序和应用序：</p>
-<p>以下面的例子说明正则序与应用序的区别</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#lang racket</span><br><span class="line">(define (square x) (* x x))</span><br><span class="line">(define (sum-of-square x y)</span><br><span class="line">  (+ (square x) (square y)))</span><br><span class="line">(define (f a)</span><br><span class="line">  (sum-of-square(+ a 1) (* a 2)))</span><br><span class="line"></span><br><span class="line">(f 5)</span><br></pre></td></tr></table></figure>
-
-<p>以求(f 5)来说明引用序与正则序的计算过程</p>
-<ul>
-<li>应用序：先求值参数后应用<br>(f 5)<br>(sum-of-square (+ a 1) (* a 2))<br>(sum-of-square(+ 5 1) (* 5 2))<br>(+ 5 1): 6，(* 5 2): 10<br>(sum-of-square 6 10)<br>(+ ( + (square 6) (square 10))<br>(+ (* 6 6) (* 10 10))<br>(+ 36 100)<br>136 </li>
-<li>正则序：完全展开而后归约<br>(f 5)<br>展开<br>(sum-of-square (+ 5 1) (* 5 2))<br>(+ (square (+ 5 1)) (square (* 5 2)))<br>(+ (* (+ 5 1) (+ 5 1)) (* (* 5 2) (* 5 2)))<br>归约<br>(+ (* 6 6) (* 10 10))<br>(+ 36 100)<br>136 </li>
-</ul>
-<p><strong>5. 计算平方根</strong></p>
-<p>牛顿发计算平方根</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#lang racket</span><br><span class="line">(define (square x) (* x x))</span><br><span class="line"></span><br><span class="line">(define (abs x)</span><br><span class="line">  (if (&lt; x 0)</span><br><span class="line">      (- x)</span><br><span class="line">      x))</span><br><span class="line"></span><br><span class="line">(define (sqrt x)</span><br><span class="line">  (define (good-enough? guess)</span><br><span class="line">    (&lt; (abs (- (square guess) x)) 0.0001))</span><br><span class="line">  (define (improve guess)</span><br><span class="line">    (average guess (/ x guess)))</span><br><span class="line">  (define (average x y)</span><br><span class="line">    (/ (+ x y) 2))</span><br><span class="line">  (define (sqrt-iter guess)</span><br><span class="line">    (if (good-enough? guess)</span><br><span class="line">        guess</span><br><span class="line">        (sqrt-iter (improve guess))))</span><br><span class="line">  (sqrt-iter 1.0))</span><br><span class="line">  </span><br><span class="line">(sqrt 9)</span><br></pre></td></tr></table></figure>
-
-<p><strong>6. 过程和它们所产生的计算</strong><br>以计算阶层的计算过程分析递归过程和迭代<br>过程的区别      </p>
-<p>递归计算</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(define (factorial n)</span><br><span class="line">  (if (= n 1)</span><br><span class="line">      1</span><br><span class="line">      (* n (factorial (- n 1)))))</span><br><span class="line">(factorial 6)</span><br></pre></td></tr></table></figure>
-
-<p>(factorial 6)<br>(* 6 (factorial 5))<br>(* 6 ( * 5 (factorial 4)))<br>(* 6 ( * 5 (* 4 (factorial 3))))<br>(* 6 ( * 5 (* 4 (* 3 (factorial 2)))))<br>(* 6 ( * 5 (* 4 (* 3 (* 2 (factorial 1))))))<br>(* 6 ( * 5 (* 4 (* 3 (* 2 1)))))<br>(* 6 ( * 5 (* 4 (* 3 2))))<br>(* 6 ( * 5 (* 4 6)))<br>(* 6 ( * 5 24))<br>(* 6 120)<br>720 </p>
-<p>迭代计算过程</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#lang racket</span><br><span class="line">(define (factorial n)</span><br><span class="line">  (define (fact-iter product counter max-count)</span><br><span class="line">  (if (&gt; counter max-count)</span><br><span class="line">      product</span><br><span class="line">      (fact-iter (* counter product)</span><br><span class="line">                 (+ counter 1)</span><br><span class="line">                 max-count)))</span><br><span class="line">  (fact-iter 1 1 n))</span><br><span class="line"></span><br><span class="line">(factorial 6)</span><br></pre></td></tr></table></figure>
-
-<p>(factorial 6)<br>(factorial 1 1 6)<br>(factorial 1 2 6)<br>(factorial 2 3 6)<br>(factorial 6 4 6)<br>(factorial 24 5 6)<br>(factorial 120 6 6)<br>(factorial 720 7 6)<br>720 </p>
-<p><strong>7. 树形递归</strong> </p>
-<ul>
-<li>树形的递归指的是计算过程展开看起来像一棵数。树形递归回回做很多冗余计算</li>
-<li>树形递归在处理层次结构性数据中是一种威力强大的工具</li>
-</ul>
-<p><strong>8. 增长的阶</strong> </p>
-<ul>
-<li>增长的阶，指的是输入变大时，某一计算过程所需资源的度量</li>
-</ul>
-<p><strong>9. 过程作为参数</strong> </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#lang racket</span><br><span class="line">(define tolerance 0.000001)</span><br><span class="line">(define (abs x)</span><br><span class="line">  (if (&lt; x 0)</span><br><span class="line">   (- x)</span><br><span class="line">   x))</span><br><span class="line"></span><br><span class="line">(define (fixed-point f first-guess)</span><br><span class="line">  (define (close-enough? v1 v2)</span><br><span class="line">    (&lt; (abs (- v1 v2)) tolerance))</span><br><span class="line">  (define (try guess)</span><br><span class="line">    (let ((next (f guess)))</span><br><span class="line">      (if (close-enough? guess next)</span><br><span class="line">          next</span><br><span class="line">          (try next))))</span><br><span class="line">  (try first-guess))</span><br><span class="line"></span><br><span class="line">(fixed-point cos 1)</span><br></pre></td></tr></table></figure>
-
-<p><strong>10. 过程作为返回值</strong>  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#lang racket</span><br><span class="line">(define dx 0.00001)</span><br><span class="line">(define (deriv g)</span><br><span class="line">  (lambda (x)</span><br><span class="line">    (/ (- (g (+ x dx)) (g x))</span><br><span class="line">       dx)))</span><br><span class="line">(define (cube x) (* x x x))</span><br><span class="line">((deriv cube) 5)</span><br></pre></td></tr></table></figure>
-
-<p>带有最小限制的元素被称为具有第一节状态。第一节元素的某些“权利或特权”包括：  </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">可以用变量命名  </span><br><span class="line">可以提供给过程作为参数  </span><br><span class="line">可以由过程作为返回结果  </span><br><span class="line">可以包含在数据结构中</span><br></pre></td></tr></table></figure>
-
-
-
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/sicp/">sicp</a>
-</div>
-
-
-  <div class="article-tags">
   
-  <span></span> <a href="/tags/sicp/">sicp</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
-    
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
-    
-      <a href="/2019/08/21/架构真经/" title="互联网架构设计原则" itemprop="url">互联网架构设计原则</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="yujinsong" target="_blank" itemprop="author">yujinsong</a>
-		
-  <p class="article-time">
-    <time datetime="2019-08-21T10:54:42.000Z" itemprop="datePublished"> Published 2019-08-21</time>
-    
-  </p>
-</header>
-    <div class="article-content">
-        
-        <h1 id="《架构真经》互联网架构设计原则"><a href="#《架构真经》互联网架构设计原则" class="headerlink" title="《架构真经》互联网架构设计原则"></a>《架构真经》互联网架构设计原则</h1><h2 id="大道至简"><a href="#大道至简" class="headerlink" title="大道至简"></a>大道至简</h2><p>不要把简单的问题复杂化，尽量保持问题解决方案的简单</p>
-<ul>
-<li>规则1：避免过度设计。要警惕复杂的解决方案</li>
-<li>规则2：方案中包括扩展。提供及时可扩展的DID（Design、Implement、Deploy）方法</li>
-<li>规则3：三次简化方案。在设计复杂系统时，从项目的范围、设计和实施角度简化方案</li>
-<li>规则4：减少域名解析。从用户角度减少域名解析次数</li>
-<li>规则5：减少页面目标。尽量减少网页上的对象数量</li>
-<li>规则6：采用同构网络</li>
-</ul>
-<h2 id="分而治之"><a href="#分而治之" class="headerlink" title="分而治之"></a>分而治之</h2><ul>
-<li>规则7：X轴扩展。也叫水平扩展，通过复制服务或数据库也分散事务处理带来的负载</li>
-<li>规则8：Y轴拆分。也叫服务或者资源拆分</li>
-<li>规则9：Z轴拆分。经常根据客户的独特属性进行拆分</li>
-</ul>
-<h2 id="水平扩展"><a href="#水平扩展" class="headerlink" title="水平扩展"></a>水平扩展</h2><ul>
-<li>规则10：向外扩展。通过复制或拆分服务或数据库而分散事务负责的方法</li>
-<li>规则11：用商品化系统。尽可能采用小型廉价的系统</li>
-<li>规则12：托管方案扩展。把系统部署到三个或者更多的数据中心，也降低总成本、增加可用性并实现灾难恢复</li>
-<li>规则13：利用云。有目的地使用云技术按需扩展</li>
-</ul>
-<h2 id="先利其器"><a href="#先利其器" class="headerlink" title="先利其器"></a>先利其器</h2><ul>
-<li>规则14：适当使用数据库。当需要ACID属性来保持数据之间的关系和一致性时，可以使用关系数据库。其它数据的存储需要考虑更适合的工具</li>
-<li>规则15：慎重使用防火墙。</li>
-<li>规则16：积极使用日志文件。使用应用日志文件来诊断和预防问题</li>
-</ul>
-<h2 id="画龙点睛"><a href="#画龙点睛" class="headerlink" title="画龙点睛"></a>画龙点睛</h2><ul>
-<li>规则17：避免画蛇添足。避免翻来覆去地检查刚完成或者马上读完刚写入的数据</li>
-<li>规则18:停止重定向。</li>
-<li>规则19：放宽时间约束。</li>
-</ul>
-<h2 id="缓存为王"><a href="#缓存为王" class="headerlink" title="缓存为王"></a>缓存为王</h2><ul>
-<li>规则20：利用CDN缓存。</li>
-<li>规则21：灵活管理缓存。</li>
-<li>规则22：利用ajax缓存。</li>
-<li>规则23：利用页面缓存。</li>
-<li>规则24：利用应用缓存。</li>
-<li>规则25：利用对象缓存。</li>
-<li>规则26：独立对象缓存。</li>
-</ul>
-<h2 id="前车之鉴"><a href="#前车之鉴" class="headerlink" title="前车之鉴"></a>前车之鉴</h2><ul>
-<li>规则27：失败乃成功之母。利用失败机会并汲取教训</li>
-<li>规则28：不靠QA法相错误。</li>
-<li>规则29：不能回滚注定失败</li>
-</ul>
-<h2 id="重中之重"><a href="#重中之重" class="headerlink" title="重中之重"></a>重中之重</h2><ul>
-<li>规则30：从事务中清除商务智能。业务系统与产品系统分离、产品智能与数据库系统分离</li>
-<li>规则31：主要昂贵的关系。主要数据模型中的关系</li>
-<li>规则32：正确使用数据库锁。</li>
-<li>规则33：禁止分阶段提交。不要使用分阶段提交协议来存储或处理事务</li>
-<li>规则34：慎用Select for Update。</li>
-<li>规则35：避免选择所有列。</li>
-</ul>
-<h2 id="有备无患"><a href="#有备无患" class="headerlink" title="有备无患"></a>有备无患</h2><ul>
-<li>规则36：用“泳道”隔离故障。在设计中实现故障隔离区或泳道</li>
-<li>规则37：拒绝单点故障。 </li>
-<li>规则38：避免系统串联。减少以串联方式连接的组件数量</li>
-<li>规则39：启用与禁止功能。搭建一个框架来启用与禁止产品的功能</li>
-</ul>
-<h2 id="超然外物"><a href="#超然外物" class="headerlink" title="超然外物"></a>超然外物</h2><ul>
-<li>规则40：力求无状态。设计和实现无状态想通过</li>
-<li>规则41：在浏览器中保持回话数据</li>
-<li>规则42：用分布式缓存处理状态</li>
-</ul>
-<h2 id="异步通信"><a href="#异步通信" class="headerlink" title="异步通信"></a>异步通信</h2><ul>
-<li>规则43：尽可能异步通信</li>
-<li>规则44：扩展消息总线</li>
-<li>规则45：避免总线过度拥挤</li>
-</ul>
-<h2 id="意犹未尽"><a href="#意犹未尽" class="headerlink" title="意犹未尽"></a>意犹未尽</h2><ul>
-<li>规则46：警惕第三方方案。扩展自己的系统，不要依赖供应商的解决方案来实现可扩展性</li>
-<li>规则47：阶梯存储策略。将存储成本与数据价值匹配</li>
-<li>规则48：分类处理不同负载。</li>
-<li>规则49：完善监控。</li>
-<li>规则50：保持竞争。让架构的每个部分都有竞争性</li>
-</ul>
-
-        
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-<div class="article-categories">
-  <span></span>
-  <a class="article-category-link" href="/categories/架构/">架构</a>
-</div>
-
-
-  <div class="article-tags">
+<section class="post" itemscope itemprop="blogitem">
   
-  <span></span> <a href="/tags/架构设计/">架构设计</a>
-  </div>
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
-
-
-
-
-
-
-   
+    <a href="/2019/08/21/构造过程抽象/" title="sicp学习笔记第一章" itemprop="url">
+  
+    <h1 itemprop="name">sicp学习笔记第一章</h1>
     
-    <article class="post-expand post" itemprop="articleBody"> 
-        <header class="article-info clearfix">
-  <h1 itemprop="name">
+     
+           <p itemprop="description" >计算机程序的构造与解释学习笔记设计良好的计算机系统就像设计良好的汽车或者核反应堆一样，具有某种模块化的设计，其中的各个部分都可以独立构造、替换、排出错误    
+1. 程序设计的基本元素   
+每种强有力的语言都提供了三种机制：
+
+基本表达形式：用语表示语言最关系的简单个体
+组合</p>
+        
     
-      <a href="/2019/08/20/hello-world/" title="Hello World" itemprop="url">Hello World</a>
-  </h1>
-  <p class="article-author">By
-       
-		<a href="/about" title="yujinsong" target="_blank" itemprop="author">yujinsong</a>
-		
-  <p class="article-time">
-    <time datetime="2019-08-20T11:47:44.169Z" itemprop="datePublished"> Published 2019-08-20</time>
+    <time datetime="2019-08-21T14:00:00.000Z" itemprop="datePublished">2019-08-21</time>
+  </a>
+</section>
+
+
+
+
+
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/21/架构真经/" title="互联网架构设计原则" itemprop="url">
+  
+    <h1 itemprop="name">互联网架构设计原则</h1>
     
-  </p>
-</header>
-    <div class="article-content">
+     
+           <p itemprop="description" >《架构真经》互联网架构设计原则大道至简不要把简单的问题复杂化，尽量保持问题解决方案的简单
+
+规则1：避免过度设计。要警惕复杂的解决方案
+规则2：方案中包括扩展。提供及时可扩展的DID（Design、Implement、Deploy）方法
+规则3：三次简化方案。在设计复杂系统时，从</p>
         
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+    
+    <time datetime="2019-08-21T10:54:42.000Z" itemprop="datePublished">2019-08-21</time>
+  </a>
+</section>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="noopener">Deployment</a></p>
 
+
+  
+<section class="post" itemscope itemprop="blogitem">
+  
+    <a href="/2019/08/20/hello-world/" title="Hello World" itemprop="url">
+  
+    <h1 itemprop="name">Hello World</h1>
+    
+     
+           <p itemprop="description" >Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the </p>
         
-        
-        <p class="article-more-link">
-          
-       </p>
-    </div>
-    <footer class="article-footer clearfix">
-<div class="article-catetags">
-
-
-</div>
-
-
-
-
-<div class="comments-count">
-	
-</div>
-
-</footer>
-
-
-    </article>
+    
+    <time datetime="2019-08-20T11:47:44.169Z" itemprop="datePublished">2019-08-20</time>
+  </a>
+</section>
 
 
 
@@ -447,18 +195,9 @@
     </ul>
 </div>
 
-  
-
-
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+	<a href="" target="_blank" title="rss">RSS</a>
 </div>
-
-  <div class="weiboshow">
-  <p class="asidetitle">Weibo</p>
-    <iframe width="100%" height="119" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=119&fansRow=2&ptype=1&speed=0&skin=9&isTitle=1&noborder=1&isWeibo=0&isFans=0&uid=&verifier=&dpc=1"></iframe>
-</div>
-
 
 </aside>
 </div>
